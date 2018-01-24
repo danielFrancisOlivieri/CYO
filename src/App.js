@@ -3,6 +3,7 @@
 VENTURE
 A CROWD SOURCED CHOOSE YOUR OWN ADVENTURE
 WRITTEN BY DANIEL OLIVIERI
+THANKS TO RPG AWESOME, SEMANTIC UI, FIREBASE, PROFESSOR LAURIE FINKE, CALEB DIXON
 
 */
 import React, { Component } from 'react'
@@ -10,6 +11,7 @@ import {
   Button,
   Container,
   Divider,
+  Dropdown,
   Grid,
   Header,
   Icon,
@@ -18,6 +20,7 @@ import {
   List,
   Menu,
   Segment,
+  Tab,
   Form,
   Select,
   TextArea,
@@ -35,6 +38,9 @@ import {
 */
 import './App.css'
 
+import $ from 'jquery'
+
+import {MenuExampleBasic} from './MenuExampleBasic'
 
 import * as firebase from 'firebase'
 
@@ -179,10 +185,6 @@ function errData(){
 }
 
 
-
-
-
-
 const FixedMenu = () => (
   <Menu fixed='top' size='large'>
     <Container>
@@ -201,6 +203,13 @@ const FixedMenu = () => (
     </Container>
   </Menu>
 )
+
+// for tabs
+const panes = [
+{ menuItem: 'Tab 1', pane: 'Tab 1 Content' },
+{ menuItem: 'Tab 2', pane: 'Tab 2 Content' },
+{ menuItem: 'Tab 3', pane: 'Tab 3 Content' },
+]
 
 export default class HomepageLayout extends Component {
 
@@ -238,7 +247,9 @@ constructor(props){
 
       userStealth: "Turn and run away.",
 
-      mostRecentChoice: "none"
+      mostRecentChoice: "none",
+
+      activeItem: 'editorials'
 
     };
 
@@ -256,6 +267,7 @@ handleInputChange(event) {
 
  }
 
+ handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
   hideFixedMenu = () => this.setState({ visible: false })
   showFixedMenu = () => this.setState({ visible: true })
@@ -287,6 +299,9 @@ console.log(ourEncounter);
 encounters.push(ourEncounter);
 
 this.setEncounterToState(ourEncounter);
+
+$( ".mainIcon" ).removeClass( "ra-all-for-one" );
+$(".mainIcon").addClass("ra-player-pyromaniac");
 
     this.setState({showModal: false});
 
@@ -345,8 +360,6 @@ this.setState({ showModal: true });
 
   }
 
-
-
 }
 
     setNewEncounter = () => this.setState({
@@ -358,7 +371,7 @@ diplomacy: newEncounter.diplomacyText,
 stealth: newEncounter.stealthText
   })
 
-  // when attack is clicked
+
 
   render() {
     const { visible } = this.state
@@ -375,10 +388,45 @@ stealth: newEncounter.stealthText
           <Segment
             inverted
             textAlign='center'
-            style={{ minHeight: 500, padding: '1em 0em', background: '#e63e26' }}
+            style={{ minHeight: 500, padding: '0em 0em', background: '#e63e26' }}
             vertical
           >
 
+          <Menu
+            size='massive'
+            fixed
+            >
+                  <Menu.Item
+                    name='editorials'
+
+                    onClick={this.handleItemClick}
+                  >
+                    Top
+                  </Menu.Item>
+
+                  <Menu.Item
+                    name='reviews'
+
+                    onClick={this.handleItemClick}
+                  >
+                    Choices
+                  </Menu.Item>
+
+                  <Menu.Item
+                    name='upcomingEvents'
+
+                    onClick={this.handleItemClick}
+                  >
+                    Stats
+                  </Menu.Item>
+                  <Menu.Item
+                    name='what'
+
+                    onClick={this.handleItemClick}
+                  >
+                    What is this?
+                  </Menu.Item>
+                </Menu>
 
             <Container text style={{}} >
               <Header
@@ -393,7 +441,7 @@ stealth: newEncounter.stealthText
                 {this.state.narratorText}
               </Segment>
               </Segment.Group>
-
+<br></br>
 
             </Container>
           </Segment>
@@ -417,13 +465,25 @@ stealth: newEncounter.stealthText
                <Form.Field name='userViolence' type="value" onChange={this.handleInputChange} control={Input} label='Violent Choice' placeholder='Pull out your ballista...' />
                <Form.Field control={Input} name='userDiplomacy' type="value" label='Diplomatic Choice' onChange={this.handleInputChange} placeholder='Tell the goblin you like its earring...' />
                <Form.Field control={Input} name='userStealth' type="value" label='Stealthy Choice' onChange={this.handleInputChange} placeholder='Take out your cape of invisibility...' />
-
-             </Form.Group>
+                       </Form.Group>
 
                </Form>
+               <Dropdown style={{width: "100%"}} selection placeholder="Select Icon">
+               <Dropdown.Menu>
+                        <Dropdown.Item><i name="ra-castle-flag" class="ra ra-castle-flag"></i> Castle Flag</Dropdown.Item>
+                        <Dropdown.Item><i name="ra-mirror" class="ra ra-mirror"></i>Mirror</Dropdown.Item>
+                        <Dropdown.Item><i name="ra-player-teleport" class="ra ra-player-teleport"></i> Teleport</Dropdown.Item>
+                        <Dropdown.Item><i name="ra-dragon" class="ra ra-dragon"></i> Shark</Dropdown.Item>
+                        <Dropdown.Item><i name="ra-broken-bottle" class="ra ra-broken-bottle"></i></Dropdown.Item>
+                        <Dropdown.Item><i name="ra-suckered-tentacle" class="ra ra-suckered-tentacle"></i>Tentacle</Dropdown.Item>
+                      </Dropdown.Menu>
+                </Dropdown>
             </Modal.Description>
           </Modal.Content>
           <Modal.Actions>
+            <Button style={{float: "left"}} primary onClick={()=> this.setState({showModal: false})}>
+               <Icon fitted name='remove' />
+            </Button>
             <Button primary onClick={this.submit}>
               Submit <Icon name='right chevron' />
             </Button>
